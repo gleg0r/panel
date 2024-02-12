@@ -4,12 +4,12 @@ import { EyeOutlined, DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import UserView from './UserView';
 import AvatarStatus from 'components/shared-components/AvatarStatus';
-import userData from "assets/data/user-list.data.json";
+import { connect } from 'react-redux';
 
 export class UserList extends Component {
 
 	state = {
-		users: userData,
+		//users: userData,
 		userProfileVisible: false,
 		selectedUser: null
 	}
@@ -104,4 +104,10 @@ export class UserList extends Component {
 	}
 }
 
-export default UserList
+
+function mapStateToProps({ users }) {
+	return { users }
+}
+
+
+export default connect(mapStateToProps)(UserList)
