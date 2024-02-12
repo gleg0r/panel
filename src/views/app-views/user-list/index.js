@@ -1,17 +1,28 @@
 import React, { Component } from 'react'
-import { Card, Table, Tag, Tooltip, message, Button } from 'antd';
-import { EyeOutlined, DeleteOutlined } from '@ant-design/icons';
-import moment from 'moment';
-import UserView from './UserView';
+import { Card, Table, Tag, message,  } from 'antd';
 import AvatarStatus from 'components/shared-components/AvatarStatus';
 import { connect } from 'react-redux';
+import axios from 'axios';
+import { API_BASE_URL, APP_PREFIX_PATH } from 'configs/AppConfig';
+import Loading from 'components/shared-components/Loading';
+import { getUserData } from 'redux/actions/Users';
 
 export class UserList extends Component {
-
+	
 	state = {
-		//users: userData,
+		users: null,
 		userProfileVisible: false,
-		selectedUser: null
+		selectedUser: null,
+		loading: false,
+		log: null,
+	}
+	
+	componentDidMount() {
+		this.setState({ loading: true });
+		axios.get(`${API_BASE_URL}/users`).then((responce) => {
+			this.setState({users: responce.data});
+			this.setState({ loading: false });
+		})
 	}
 
 	deleteUser = userId => {
@@ -35,8 +46,12 @@ export class UserList extends Component {
     });
 	}
 
+	nextPath = (path) => {
+		this.props.history.push(path);
+	}
+
 	render() {
-		const { users, userProfileVisible, selectedUser } = this.state;
+		const { users, selectedUser } = this.state;
 
 		const tableColumns = [
 			{
@@ -44,7 +59,7 @@ export class UserList extends Component {
 				dataIndex: 'name',
 				render: (_, record) => (
 					<div className="d-flex">
-						<AvatarStatus src={record.img} name={record.name} subTitle={record.email}/>
+						<AvatarStatus name={record.name} subTitle={record.email}/>
 					</div>
 				),
 				sorter: {
@@ -56,49 +71,37 @@ export class UserList extends Component {
 				},
 			},
 			{
-				title: 'Role',
-				dataIndex: 'role',
+				title: 'User name',
+				dataIndex: 'username',
 				sorter: {
-					compare: (a, b) => a.role.length - b.role.length,
+					compare: (a, b) => a.username.length - b.username.length,
 				},
 			},
 			{
-				title: 'Last online',
-				dataIndex: 'lastOnline',
-				render: date => (
-					<span>{moment.unix(date).format("MM/DD/YYYY")} </span>
+				title: 'Phone',
+				dataIndex: 'phone',
+				render: phone => (
+					<span>{phone}</span>
 				),
-				sorter: (a, b) => moment(a.lastOnline).unix() - moment(b.lastOnline).unix()
+				sorter: (a, b) => a.phone.length - b.phone.length
 			},
 			{
-				title: 'Status',
-				dataIndex: 'status',
+				title: 'Website',
+				dataIndex: 'website',
 				render: status => (
-					<Tag className ="text-capitalize" color={status === 'active'? 'cyan' : 'red'}>{status}</Tag>
+					<Tag className ="text-capitalize" color={'cyan'}>{status}</Tag>
 				),
 				sorter: {
-					compare: (a, b) => a.status.length - b.status.length,
+					compare: (a, b) => a.website.length - b.website.length,
 				},
 			},
-			{
-				title: '',
-				dataIndex: 'actions',
-				render: (_, elm) => (
-					<div className="text-right">
-						<Tooltip title="View">
-							<Button type="primary" className="mr-2" icon={<EyeOutlined />} onClick={() => {this.showUserProfile(elm)}} size="small"/>
-						</Tooltip>
-						<Tooltip title="Delete">
-							<Button danger icon={<DeleteOutlined />} onClick={()=> {this.deleteUser(elm.id)}} size="small"/>
-						</Tooltip>
-					</div>
-				)
-			}
 		];
+
 		return (
-			<Card bodyStyle={{'padding': '0px'}}>
+			this.state.loading 
+			? <Loading />
+			: <Card onClick={() => this.nextPath(`${APP_PREFIX_PATH}/setting`)} bodyStyle={{'padding': '0px'}}>
 				<Table columns={tableColumns} dataSource={users} rowKey='id' />
-				<UserView data={selectedUser} visible={userProfileVisible} close={()=> {this.closeUserProfile()}}/>
 			</Card>
 		)
 	}

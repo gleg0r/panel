@@ -24,9 +24,8 @@ export class UserView extends Component {
 				visible={visible}
 			>
 				<div className="text-center mt-3">
-					<Avatar size={80} src={data?.img} />
 					<h3 className="mt-2 mb-0">{data?.name}</h3>
-					<span className="text-muted">{data?.personalInfo.title}</span>
+					<span className="text-muted">{data?.address.city}</span>
 				</div>
 				<Divider dashed />
 				<div className="">
@@ -37,18 +36,18 @@ export class UserView extends Component {
 					</p>
 					<p>
 						<CalendarOutlined />
-						<span className="ml-3 text-dark">Born in {data?.personalInfo.birthday}</span>
+						<span className="ml-3 text-dark">Born in </span>
 					</p>
 				</div>
 				<div className="mt-5">
 					<h6 className="text-muted text-uppercase mb-3">CONTACT</h6>
 					<p>
 						<MobileOutlined />
-						<span className="ml-3 text-dark">{data?.personalInfo.phoneNumber}</span>
+						<span className="ml-3 text-dark"></span>
 					</p>
 					<p>
 						<MailOutlined />
-						<span className="ml-3 text-dark">{data?.email? data?.email: '-'}</span>
+						<span className="ml-3 text-dark">{data?.email ? data?.email : '-'}</span>
 					</p>
 					<p>
 						<CompassOutlined />
